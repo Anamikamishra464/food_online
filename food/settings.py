@@ -29,6 +29,7 @@ DEBUG = config('DEBUG', cast=bool)
 ALLOWED_HOSTS = []
        
 
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -127,6 +128,9 @@ STATICFILES_DIRS=[
     'food/static'
 ]
 
+
+
+
 #media files configuration
 MEDIA_URL='/media/'
 MEDIA_ROOT=BASE_DIR /'media'
@@ -142,3 +146,20 @@ MESSAGE_TAGS = {
     messages.ERROR: "danger",
     50: "critical",
 }
+
+#Email configuration
+
+# EMAIL_HOST = config('EMAIL_HOST')
+# EMAIL_PORT = config('EMAIL_PORT',cast=int)
+# EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+# EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+# EMAIL_USE_TLS = True
+
+# CSRF and Host Settings
+ALLOWED_HOSTS = ['*']
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+]
+
