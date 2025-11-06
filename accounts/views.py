@@ -6,6 +6,8 @@ from vendor.forms import VendorForm
 from .utils import detectUser
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.core.exceptions import PermissionDenied
+from vendor.models import Vendor
+
 
 # Create your views here.
 # restrict the vendor from accessing the customer page
@@ -73,7 +75,7 @@ def registerVendor(request):
     elif request.method=='POST':
         form=UserForm(request.POST)
         v_form=VendorForm(request.POST,request.FILES)
-        if form.is_valid() and v_form.is_valid:
+        if form.is_valid() and v_form.is_valid():
             
             first_name=form.cleaned_data['first_name']
             last_name=form.cleaned_data['last_name']
@@ -125,7 +127,7 @@ def login(request):
 
         if user is not None:
             auth.login(request,user)
-            messages.success(request,'You are logged in.')
+            messages.success(request,'You are now logged in.')
             return redirect('myAccount')
         else:
             messages.error(request, 'Invalid login Credentials')
@@ -152,4 +154,5 @@ def custDashboard(request):
 @login_required(login_url='login')
 @user_passes_test(check_role_vendor)
 def vendorDashboard(request):
+    vendor=Vendor.objects.get(user=request.user)
     return render(request,'accounts/vendorDashboard.html')
