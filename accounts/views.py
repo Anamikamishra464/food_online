@@ -124,6 +124,7 @@ def login(request):
         password=request.POST['password']
 
         user=auth.authenticate(email=email,password=password)
+        print(email,password)
 
         if user is not None:
             auth.login(request,user)
@@ -151,8 +152,17 @@ def myAccount(request):
 def custDashboard(request):
     return render(request,'accounts/custDashboard.html')
 
+# @login_required(login_url='login')
+# @user_passes_test(check_role_vendor)
+# def vendorDashboard(request):
+#     vendor=Vendor.objects.get(user=request.user)
+#     return render(request,'accounts/vendorDashboard.html')
+
 @login_required(login_url='login')
 @user_passes_test(check_role_vendor)
 def vendorDashboard(request):
-    vendor=Vendor.objects.get(user=request.user)
-    return render(request,'accounts/vendorDashboard.html')
+    vendor = Vendor.objects.get(user=request.user)
+    context = {
+        'vendor': vendor
+    }
+    return render(request, 'accounts/vendorDashboard.html', context)
