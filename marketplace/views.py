@@ -1,12 +1,14 @@
 from django.shortcuts import render,get_object_or_404,render
 from django.http import JsonResponse
-from vendor.models import Vendor
+from vendor.models import  Vendor,OpeningHour
 from menu.models import Category,FoodItem
 from django.db.models import Prefetch
 from .models import Cart
 from django.contrib.auth.decorators import login_required
 from .context_processor import get_cart_counter, get_cart_amounts
 from django.http import HttpResponse
+from django.db.models import Q
+from datetime import date,datetime
 
 # Create your views here.
 def marketplace(request):
@@ -23,8 +25,14 @@ def vendor_detail(request,vendor_slug):
     categories=Category.objects.filter(vendor=vendor).prefetch_related(Prefetch
     ('fooditems',
      queryset=FoodItem.objects.filter(is_available=True))
-     )
-    
+     
+    )
+    opening_hours=OpeningHour.objects.filter(vendor=vendor).order_by('day','-from_hour')
+    #check current day's ordering hours 
+    today_date=date.today()
+    today=today_date.isoweekday()
+    current_opening_hours=OpeningHour.objects.filter(vendor=vendor,day=today)
+
     if request.user.is_authenticated:
         cart_items=Cart.objects.filter(user=request.user)
     else:
@@ -33,6 +41,9 @@ def vendor_detail(request,vendor_slug):
         'vendor':vendor,
         'categories':categories,
         'cart_items':cart_items,
+        'opening_hours':opening_hours,
+        'current_opening_hours':current_opening_hours,
+       
     }
     return render(request,'marketplace/vendor_detail.html',context)
 
@@ -114,3 +125,24 @@ def delete_cart(request,cart_id):
                 return JsonResponse({'status':'failed','message':'Cart item does not exist'})
         else:
             return JsonResponse({'status':'failed','message':'Invalid request'})
+
+def search(request):
+    # address=request.GET['address']
+    # latitude=request.GET['lat']
+    # longitude=request.GET['lng']
+    # radius=request.GET['radius']
+    keyword=request.GET['keyword']
+
+    # get vendor ids that has the food item the user is looking for
+    fetch_vendors_by_fooditems=FoodItem.objects.filter(food_title__icontains=keyword,is_available=True).values_list('vendor',flat=True)
+   
+    vendors=Vendor.objects.filter(Q(id__in=fetch_vendors_by_fooditems) | Q(vendor_name__icontains=keyword,is_approved=True,user__is_active=True))
+
+    
+    vendor_count=vendors.count()
+    context={
+        'vendors':vendors,
+        'vendor_count':vendor_count,
+    }
+
+    return render(request, 'marketplace/listings.html',context)

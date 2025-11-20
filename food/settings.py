@@ -68,6 +68,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'accounts.context_processor.get_vendor',
+                'accounts.context_processor.get_google_api',
                 'marketplace.context_processor.get_cart_counter',
                 'marketplace.context_processor.get_cart_amounts',
 
@@ -170,3 +171,4 @@ CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:8000',
 ]
 
+GOOGLE_API_KEY = 'AIzaSyCc6FpcbllcvR_cEmmT2igaq48b8Lxusno' 
