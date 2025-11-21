@@ -171,4 +171,4 @@ CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:8000',
 ]
 
-GOOGLE_API_KEY = 'AIzaSyCc6FpcbllcvR_cEmmT2igaq48b8Lxusno' 
+GOOGLE_API_KEY = 'yhftgbyCc6FpcbllcvR_cEmmT2igaq48b8Lxusno' 
