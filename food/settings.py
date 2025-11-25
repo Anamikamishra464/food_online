@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'menu',
     'marketplace',
     'customers',
+    'orders',
 ]
 
 MIDDLEWARE = [
@@ -73,6 +74,7 @@ TEMPLATES = [
                 'marketplace.context_processor.get_cart_counter',
                 'marketplace.context_processor.get_cart_amounts',
                 'accounts.context_processor.get_user_profile',
+                'accounts.context_processor.get_paypal_client_id',
 
             ],
         },
@@ -172,4 +174,7 @@ CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:8000',
 ]
 
-GOOGLE_API_KEY = 'yhftgbyCc6FpcbllcvR_cEmmT2igaq48b8Lxusno' 
+GOOGLE_API_KEY = config('GOOGLE_API_KEY')
+PAYPAL_CLIENT_ID = config('PAYPAL_CLIENT_ID')
+
+SECURE_CROSS_ORIGIN_OPENER_POLICY='same-origin-allow-popups '
