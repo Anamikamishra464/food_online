@@ -9,6 +9,7 @@ from django.core.exceptions import PermissionDenied
 from vendor.models import Vendor
 from django.template.defaultfilters import slugify
 from orders.models import Order
+import datetime
 
 
 # Create your views here.
@@ -169,7 +170,27 @@ def custDashboard(request):
 @user_passes_test(check_role_vendor)
 def vendorDashboard(request):
     vendor = Vendor.objects.get(user=request.user)
+    orders = Order.objects.filter(vendor__in=[vendor], is_ordered=True)
+    recent_orders=orders[:10]
+    #current month revenue
+    current_month=datetime.datetime.now().month
+    current_month_orders=orders.filter(vendor__in=[vendor.id],created_at__month=current_month)
+    current_month_revenue =0
+    for i in current_month_orders:
+        current_month_revenue += i.get_total_by_vendor()['grand_total']
+  
+    #total revenue
+    total_revenue=0
+    for i in orders:
+        total_revenue+=i.get_total_by_vendor()['grand_total']
+
     context = {
-        'vendor': vendor
+        'vendor': vendor,
+        'orders': orders, 
+        'orders_count' : orders.count(),
+        'recent_orders':recent_orders,
+        'total_revenue':total_revenue,
+        'current_month_revenue':current_month_revenue,
+
     }
     return render(request, 'accounts/vendorDashboard.html', context)
